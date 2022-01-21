@@ -4,15 +4,17 @@ const nextBtn = document.querySelector(".play-forward");
 const prevBtn = document.querySelector(".play-back");
 const durationTime=document.querySelector(".duration");
 const remainingTime=document.querySelector(".remaining");
-
+const rangeProgress=document.querySelector(".range");
 const listMusic = ["hh.mp3", "ncmlfu.mp3", "sfos.mp3"];
 let isPlaying = true
 let indexSong = 0;
 playBtn.addEventListener("click", playPause);
 
+//---------------To the next song----------//
 nextBtn.addEventListener("click", function () {
     changeSong(1);
 });
+//---------------To the previous song----------//
 
 prevBtn.addEventListener("click", function () {
     changeSong(-1);
@@ -58,6 +60,12 @@ function playPause() {
 //--------------Set Duration Time--------------//
 function displayTime(){
 const {duration,currentTime}=song;
+rangeProgress.max= duration;
+rangeProgress.value=currentTime;
+// if(rangeProgress.value=duration){
+//     changeSong(1);
+//     currentTime=0;
+// }
 remainingTime.textContent=formartTimer(currentTime);
 if(!duration){
     durationTime.textContent="00:00"
@@ -68,9 +76,23 @@ if(!duration){
 displayTime();
 setInterval(displayTime,1000);
 
+
+//--------------Convert seconds => minute+seconds---------------//
 function formartTimer(number){
     const minute= Math.floor(number/60);
     const seconds= Math.floor(number-minute*60);
     
     return `${minute}:${seconds<10?"0"+seconds:seconds}`;
+}
+
+rangeProgress.addEventListener("change", pullProgressBar);
+
+function pullProgressBar(){
+    song.currentTime=rangeProgress.value;
+}
+
+song.addEventListener("ended",endandNextSong);
+
+function endandNextSong(){
+    changeSong(1);
 }
